@@ -1,0 +1,51 @@
+{% extends 'loans/base.html' %}
+
+{% block title %}Кызматкерди өзгөртүү - Банк Системасы{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <h2 style="margin-bottom: 30px; color: #667eea;">✏️ Кызматкерди өзгөртүү</h2>
+    
+    <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+        <p><strong>Логин:</strong> {{ user.username }}</p>
+        <p><strong>Түзүлгөн күнү:</strong> {{ employee.created_at|date:"d.m.Y H:i" }}</p>
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label>Аты:</label>
+            <input type="text" name="first_name" value="{{ user.first_name }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Фамилиясы:</label>
+            <input type="text" name="last_name" value="{{ user.last_name }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Телефон:</label>
+            <input type="text" name="phone" value="{{ employee.phone }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Жаңы пароль (өзгөртүү керек болбосо бош калтырыңыз):</label>
+            <input type="password" name="new_password" placeholder="Жаңы пароль">
+            <small style="color: #666; display: block; margin-top: 5px;">
+                Эскертүү: Пароль өзгөртүлсө, кызматкер жаңы пароль менен кирет
+            </small>
+        </div>
+        
+        <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" name="is_active" id="is_active" {% if user.is_active and employee.is_active_employee %}checked{% endif %} style="width: auto;">
+            <label for="is_active" style="margin: 0;">Кызматкер активдүү</label>
+        </div>
+        
+        <div style="display: flex; gap: 10px; margin-top: 30px;">
+            <button type="submit" class="btn btn-success" style="flex: 1;">💾 Сактоо</button>
+            <a href="{% url 'employees' %}" class="btn btn-primary" style="flex: 1; text-align: center;">Болдурбоо</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

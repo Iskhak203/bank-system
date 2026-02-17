@@ -1,0 +1,101 @@
+{% extends 'loans/base.html' %}
+
+{% block title %}Башкы бет - Банк Системасы{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>Жалпы берилген кредит</h3>
+        <div class="number">{{ total_given|floatformat:0 }} сом</div>
+    </div>
+    <div class="stat-card">
+        <h3>Кайтарыла элек сумма</h3>
+        <div class="number">{{ total_remaining|floatformat:0 }} сом</div>
+    </div>
+    <div class="stat-card">
+        <h3>Активдүү кредиттер</h3>
+        <div class="number">{{ active_loans_count }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Кардарлар</h3>
+        <div class="number">{{ customers_count }}</div>
+    </div>
+</div>
+
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>Соңгү кредиттер</h2>
+        <a href="{% url 'create_loan' %}" class="btn btn-primary">+ Жаңы кредит</a>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Кардар</th>
+                <th>Сумма</th>
+                <th>Айлык төлөм</th>
+                <th>Калган сумма</th>
+                <th>Прогресс</th>
+                <th>Статус</th>
+                <th>Аракет</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for loan in recent_loans %}
+            <tr>
+                <td>#{{ loan.id }}</td>
+                <td>{{ loan.customer.full_name }}</td>
+                <td>{{ loan.total_amount|floatformat:0 }} сом</td>
+                <td>{{ loan.monthly_payment|floatformat:0 }} сом</td>
+                <td>{{ loan.remaining_amount|floatformat:0 }} сом</td>
+                <td>
+                    <div class="progress-fill-small" style="width: calc({{ loan.progress_percent }}%);">
+                    </div>
+                </td>
+                <td>
+                    {% if loan.status == 'active' %}
+                        <span class="status-badge status-pending">Активдүү</span>
+                    {% elif loan.status == 'completed' %}
+                        <span class="status-badge status-completed">Жабылган</span>
+                    {% else %}
+                        <span class="status-badge status-paid">Мөөнөтү өткөн</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'loan_detail' loan.id %}" class="btn btn-primary" style="padding: 6px 12px; font-size: 14px;">Төлөмдөр</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" style="text-align: center; padding: 40px; color: #999;">
+                    Азырынча кредиттер жок. <a href="{% url 'create_loan' %}">Биринчи кредитти түзүңүз</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+.progress-bar-small {
+    width: 100px;
+    height: 20px;
+    background: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-fill-small {
+    height: 100%;
+    background: linear-gradient(90deg, #2ed573, #7bed9f);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+}
+</style>
+{% endblock %}

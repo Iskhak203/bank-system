@@ -1,0 +1,59 @@
+{% extends 'loans/base.html' %}
+
+{% block title %}Кызматкерлер - Банк Системасы{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>👤 Бардык кызматкерлер</h2>
+        <a href="{% url 'create_employee' %}" class="btn btn-success">+ Жаңы кызматкер түзүү</a>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Логин</th>
+                <th>Толук аты-жөнү</th>
+                <th>Телефон</th>
+                <th>Статус</th>
+                <th>Түзүлгөн күнү</th>
+                <th>Аракет</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emp in employees %}
+            <tr>
+                <td>#{{ emp.id }}</td>
+                <td><strong>{{ emp.user.username }}</strong></td>
+                <td>{{ emp.user.get_full_name }}</td>
+                <td>{{ emp.phone }}</td>
+                <td>
+                    {% if emp.is_active_employee and emp.user.is_active %}
+                        <span class="status-badge status-paid">✅ Иштейт</span>
+                    {% else %}
+                        <span class="status-badge status-completed">❌ Токтотулган</span>
+                    {% endif %}
+                </td>
+                <td>{{ emp.created_at|date:"d.m.Y" }}</td>
+                <td>
+                    <a href="{% url 'edit_employee' emp.id %}" class="btn btn-primary" style="padding: 6px 12px; font-size: 14px;">
+                        ✏️ Өзгөртүү
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 40px; color: #999;">
+                    Азырынча кызматкерлер жок.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div style="margin-top: 20px;">
+    <a href="{% url 'dashboard' %}" class="btn btn-primary">← Башкы бетке кайтуу</a>
+</div>
+{% endblock %}

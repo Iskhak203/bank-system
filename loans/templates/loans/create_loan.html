@@ -1,0 +1,118 @@
+{% extends 'loans/base.html' %}
+
+{% block title %}Жаңы кредит - Банк Системасы{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 800px; margin: 0 auto;">
+    <h2 style="margin-bottom: 30px;">Жаңы кредит түзүү</h2>
+    
+    <form method="post" id="loanForm">
+        {% csrf_token %}
+        
+        <h3 style="margin-bottom: 20px; color: #667eea;">Кардар маалыматы</h3>
+        
+        <div class="form-group">
+            <label>Бар кардарды тандоо:</label>
+            <select name="customer_id" id="customerSelect">
+                <option value="">-- Жаңы кардар --</option>
+                {% for customer in customers %}
+                <option value="{{ customer.id }}">{{ customer.full_name }} ({{ customer.phone }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div id="newCustomerFields">
+            <div class="form-group">
+                <label>Толук аты-жөнү:</label>
+                <input type="text" name="full_name" id="fullName" placeholder="Мисалы: Асанов Асан Асанович">
+            </div>
+            
+            <div class="form-group">
+                <label>Телефон:</label>
+                <input type="text" name="phone" id="phone" placeholder="+996 555 123 456">
+            </div>
+            
+            <div class="form-group">
+                <label>Паспорт номери:</label>
+                <input type="text" name="passport_number" id="passport" placeholder="AN 1234567">
+            </div>
+            
+            <div class="form-group">
+                <label>Адрес:</label>
+                <input type="text" name="address" id="address" placeholder="Бишкек ш., ...">
+            </div>
+        </div>
+        
+        <h3 style="margin: 30px 0 20px; color: #667eea;">Кредит шарттары</h3>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="form-group">
+                <label>Сумма (сом):</label>
+                <input type="number" name="amount" id="amount" required min="1000" value="200000" oninput="calculateLoan()">
+            </div>
+            
+            <div class="form-group">
+                <label>Мөөнөтү (ай):</label>
+                <input type="number" name="months" id="months" required min="1" max="60" value="10" oninput="calculateLoan()">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>Процент ставкасы (%):</label>
+            <input type="number" name="interest_rate" id="interestRate" step="0.01" value="10.00" oninput="calculateLoan()">
+        </div>
+        
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
+            <h4 style="margin-bottom: 15px;">Эсептөө натыйжасы:</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div>
+                    <div style="font-size: 12px; color: #666;">Процент суммасы:</div>
+                    <div style="font-size: 18px; font-weight: bold;" id="interestAmount">20,000 сом</div>
+                </div>
+                <div>
+                    <div style="font-size: 12px; color: #666;">Жалпы кайтаруу:</div>
+                    <div style="font-size: 18px; font-weight: bold;" id="totalAmount">220,000 сом</div>
+                </div>
+                <div style="grid-column: 1 / -1;">
+                    <div style="font-size: 12px; color: #666;">Айлык төлөм:</div>
+                    <div style="font-size: 24px; font-weight: bold; color: #2ed573;" id="monthlyPayment">22,000 сом</div>
+                </div>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Кредитти түзүү</button>
+    </form>
+</div>
+
+<script>
+function calculateLoan() {
+    const amount = parseFloat(document.getElementById('amount').value) || 0;
+    const months = parseInt(document.getElementById('months').value) || 1;
+    const rate = parseFloat(document.getElementById('interestRate').value) || 0;
+    
+    const interestAmount = (amount * rate) / 100;
+    const totalAmount = amount + interestAmount;
+    const monthlyPayment = totalAmount / months;
+    
+    document.getElementById('interestAmount').textContent = interestAmount.toLocaleString('ru-RU', {maximumFractionDigits: 0}) + ' сом';
+    document.getElementById('totalAmount').textContent = totalAmount.toLocaleString('ru-RU', {maximumFractionDigits: 0}) + ' сом';
+    document.getElementById('monthlyPayment').textContent = monthlyPayment.toLocaleString('ru-RU', {maximumFractionDigits: 0}) + ' сом';
+}
+
+document.getElementById('customerSelect').addEventListener('change', function() {
+    const fields = document.getElementById('newCustomerFields');
+    const inputs = fields.querySelectorAll('input');
+    
+    if (this.value) {
+        fields.style.opacity = '0.5';
+        inputs.forEach(input => input.required = false);
+    } else {
+        fields.style.opacity = '1';
+        inputs.forEach(input => input.required = true);
+    }
+});
+
+// Баштапкы эсептөө
+calculateLoan();
+</script>
+{% endblock %}

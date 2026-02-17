@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: bank-system
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn bank.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: bank-db
+          property: connectionString
+
+databases:
+  - name: bank-db
+    databaseName: bank_system
+    user: bank_user
+    

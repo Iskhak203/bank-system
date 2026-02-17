@@ -1,0 +1,29 @@
+{% extends 'loans/base.html' %}
+
+{% block auth_content %}
+<div class="login-container">
+    <div class="login-box">
+        <h2>🏦 Банк Системасы</h2>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">Кызматкерлер үчүн кирүү</p>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Логин:</label>
+                <input type="text" name="username" required placeholder="Логиниңизди киргизиңиз">
+            </div>
+            <div class="form-group">
+                <label>Пароль:</label>
+                <input type="password" name="password" required placeholder="Паролуңузду киргизиңиз">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Кирүү</button>
+        </form>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; font-size: 14px; color: #666;">
+            <strong>Демо үчүн:</strong><br>
+            Логин: <code>employee1</code><br>
+            Пароль: <code>pass12345</code>
+        </div>
+    </div>
+</div>
+{% endblock %}

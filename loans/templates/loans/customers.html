@@ -1,0 +1,43 @@
+{% extends 'loans/base.html' %}
+
+{% block title %}Кардарлар - Банк Системасы{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>Кардарлар тизмеси</h2>
+        <a href="{% url 'create_loan' %}" class="btn btn-primary">+ Жаңы кредит</a>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Толук аты-жөнү</th>
+                <th>Телефон</th>
+                <th>Паспорт</th>
+                <th>Адрес</th>
+                <th>Түзүлгөн күнү</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+            <tr>
+                <td>#{{ customer.id }}</td>
+                <td>{{ customer.full_name }}</td>
+                <td>{{ customer.phone }}</td>
+                <td>{{ customer.passport_number }}</td>
+                <td>{{ customer.address|default:"-" }}</td>
+                <td>{{ customer.created_at|date:"d.m.Y" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 40px; color: #999;">
+                    Азырынча кардарлар жок. <a href="{% url 'create_loan' %}">Биринчи кардарды түзүңүз</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

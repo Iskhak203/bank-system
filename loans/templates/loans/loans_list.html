@@ -1,0 +1,57 @@
+{% extends 'loans/base.html' %}
+
+{% block title %}Кредиттер - Банк Системасы{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>Бардык кредиттер</h2>
+        <a href="{% url 'create_loan' %}" class="btn btn-primary">+ Жаңы кредит</a>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Кардар</th>
+                <th>Сумма</th>
+                <th>Айлык төлөм</th>
+                <th>Калган сумма</th>
+                <th>Мөөнөтү</th>
+                <th>Статус</th>
+                <th>Аракет</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for loan in loans %}
+            <tr>
+                <td>#{{ loan.id }}</td>
+                <td>{{ loan.customer.full_name }}</td>
+                <td>{{ loan.total_amount|floatformat:0 }} сом</td>
+                <td>{{ loan.monthly_payment|floatformat:0 }} сом</td>
+                <td>{{ loan.remaining_amount|floatformat:0 }} сом</td>
+                <td>{{ loan.months }} ай</td>
+                <td>
+                    {% if loan.status == 'active' %}
+                        <span class="status-badge status-pending">Активдүү</span>
+                    {% elif loan.status == 'completed' %}
+                        <span class="status-badge status-completed">Жабылган</span>
+                    {% else %}
+                        <span class="status-badge status-paid">Мөөнөтү өткөн</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'loan_detail' loan.id %}" class="btn btn-primary" style="padding: 6px 12px; font-size: 14px;">Көрүү</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" style="text-align: center; padding: 40px; color: #999;">
+                    Азырынча кредиттер жок. <a href="{% url 'create_loan' %}">Биринчи кредитти түзүңүз</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends 'loans/base.html' %}
+
+{% block title %}Кредит #{{ loan.id }} - Банк Системасы{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
+        <div>
+            <h2>Кредит #{{ loan.id }}</h2>
+            <p style="color: #666; margin-top: 10px;">
+                Кардар: <strong>{{ loan.customer.full_name }}</strong> | 
+                Телефон: {{ loan.customer.phone }} |
+                Паспорт: {{ loan.customer.passport_number }}
+            </p>
+        </div>
+        <div style="text-align: right;">
+            <div style="font-size: 24px; font-weight: bold; color: #667eea;">
+                {{ loan.remaining_amount|floatformat:0 }} сом
+            </div>
+            <div style="color: #666; font-size: 14px;">Калган сумма</div>
+        </div>
+    </div>
+    
+    <!-- Прогресс бар -->
+    <div class="progress-bar">
+        <div class="progress-fill" style="width: {{ progress_percent }}%;">
+            {{ progress_percent|floatformat:0 }}%
+        </div>
+    </div>
+    <p style="text-align: center; color: #666; margin-bottom: 20px;">
+        Төлөнгөн: {{ paid_count }} / {{ loan.months }} ай
+    </p>
+    
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; background: #f8f9fa; padding: 20px; border-radius: 10px;">
+        <div>
+            <div style="font-size: 12px; color: #666;">Баштапкы сумма</div>
+            <div style="font-size: 20px; font-weight: bold;">{{ loan.total_amount|floatformat:0 }} сом</div>
+        </div>
+        <div>
+            <div style="font-size: 12px; color: #666;">Процент</div>
+            <div style="font-size: 20px; font-weight: bold;">{{ loan.interest_rate }}%</div>
+        </div>
+        <div>
+            <div style="font-size: 12px; color: #666;">Жалпы (процент менен)</div>
+            <div style="font-size: 20px; font-weight: bold;">{{ loan.total_with_interest|floatformat:0 }} сом</div>
+        </div>
+        <div>
+            <div style="font-size: 12px; color: #666;">Айлык төлөм</div>
+            <div style="font-size: 20px; font-weight: bold; color: #2ed573;">{{ loan.monthly_payment|floatformat:0 }} сом</div>
+        </div>
+        <div>
+            <div style="font-size: 12px; color: #666;">Мөөнөтү</div>
+            <div style="font-size: 20px; font-weight: bold;">{{ loan.months }} ай</div>
+        </div>
+        <div>
+            <div style="font-size: 12px; color: #666;">Башталган күнү</div>
+            <div style="font-size: 20px; font-weight: bold;">{{ loan.start_date|date:"d.m.Y" }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h3 style="margin-bottom: 20px;">📅 Төлөм графиги</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Ай</th>
+                <th>Төлөө күнү</th>
+                <th>Сумма</th>
+                <th>Статус</th>
+                <th>Төлөнгөн күнү</th>
+                <th>Аракет</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for schedule in schedules %}
+            <tr class="payment-row {% if schedule.is_paid %}paid{% endif %}">
+                <td>Ай {{ schedule.month_number }}</td>
+                <td>{{ schedule.due_date|date:"d.m.Y" }}</td>
+                <td><strong>{{ schedule.amount|floatformat:0 }} сом</strong></td>
+                <td>
+                    {% if schedule.is_paid %}
+                        <span class="status-badge status-paid">✓ Төлөнгөн</span>
+                    {% else %}
+                        <span class="status-badge status-pending">⏳ Күтүлүүдө</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if schedule.paid_date %}
+                        {{ schedule.paid_date|date:"d.m.Y H:i" }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% if schedule.is_paid %}
+                        <button class="payment-btn paid" disabled>Төлөнү</button>
+                    {% else %}
+                        <form method="post" action="{% url 'make_payment' schedule.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="payment-btn pending">Төлөө</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div style="margin-top: 20px;">
+    <a href="{% url 'dashboard' %}" class="btn btn-primary">← Башкы бетке кайтуу</a>
+</div>
+{% endblock %}

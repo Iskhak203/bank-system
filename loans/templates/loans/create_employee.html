@@ -1,0 +1,44 @@
+{% extends 'loans/base.html' %}
+
+{% block title %}Жаңы кызматкер - Банк Системасы{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <h2 style="margin-bottom: 30px; color: #2ed573;">👤 Жаңы кызматкер түзүү</h2>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label>Логин (кирүү үчүн):</label>
+            <input type="text" name="username" required placeholder="Мисалы: worker1">
+        </div>
+        
+        <div class="form-group">
+            <label>Пароль:</label>
+            <input type="password" name="password" required placeholder="Жакшы пароль ойлоп табыңыз">
+        </div>
+        
+        <div class="form-group">
+            <label>Аты:</label>
+            <input type="text" name="first_name" required placeholder="Мисалы: Айбек">
+        </div>
+        
+        <div class="form-group">
+            <label>Фамилиясы:</label>
+            <input type="text" name="last_name" required placeholder="Мисалы: Карыбаев">
+        </div>
+        
+        <div class="form-group">
+            <label>Телефон:</label>
+            <input type="text" name="phone" required placeholder="+996 555 123 456">
+        </div>
+        
+        <button type="submit" class="btn btn-success" style="width: 100%;">Кызматкерди түзүү</button>
+    </form>
+</div>
+
+<div style="margin-top: 20px; text-align: center;">
+    <a href="{% url 'employees' %}" class="btn btn-primary">← Кызматкерлерге кайтуу</a>
+</div>
+{% endblock %}
