@@ -134,7 +134,7 @@ def create_loan(request):
         employee = request.user.employee
     except Employee.DoesNotExist:
         messages.error(request, "Сиз кызматкер эмессиз!")
-        return redirect('logout')
+        return redirect('login')
     
     if request.method == 'POST':
         customer_id = request.POST.get('customer_id')

@@ -17,11 +17,30 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth.views import LoginView, LogoutView
+from django.urls import reverse_lazy
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    # App urls
     path('', include('loans.urls')),
-    path('login/', LoginView.as_view(template_name='loans/login.html'), name='login'),
-    # GET методту да кабыл алуу үчүн:
-    path('logout/', LogoutView.as_view(http_method_names=['get', 'post']), name='logout'),
+
+    # Login
+    path(
+        'login/',
+        LoginView.as_view(
+            template_name='loans/login.html',
+            redirect_authenticated_user=True
+        ),
+        name='login'
+    ),
+
+    # Logout
+    path(
+        'logout/',
+        LogoutView.as_view(
+            next_page=reverse_lazy('login')
+        ),
+        name='logout'
+    ),
 ]
